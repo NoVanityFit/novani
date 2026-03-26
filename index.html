@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NoVanityFit | Online Fitness Coaching</title>
+    
+    <!-- Tailwind CSS (CDN経由で読み込み) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Noto+Sans+JP:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Tailwindの設定 -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        display: ['Anton', 'sans-serif'],
+                        sans: ['Noto Sans JP', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- カスタムCSSとアニメーション -->
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            font-family: 'Noto Sans JP', sans-serif;
+            overflow-x: hidden;
+        }
+        .noise-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 50; opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+        .text-outline {
+            color: transparent;
+            -webkit-text-stroke: 1px rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        .text-outline:hover {
+            color: #ffffff;
+            -webkit-text-stroke: 1px #ffffff;
+        }
+
+        /* スクロールアニメーション用クラス */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s cubic-bezier(0.21, 0.47, 0.32, 0.98), transform 0.8s cubic-bezier(0.21, 0.47, 0.32, 0.98);
+        }
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .hero-text {
+            opacity: 0;
+            transform: translateY(50px) skewY(5deg);
+            transition: all 1s cubic-bezier(0.21, 0.47, 0.32, 0.98);
+        }
+        .hero-text.visible {
+            opacity: 1;
+            transform: translateY(0) skewY(0);
+        }
+
+        /* 背景と3Dオブジェクトのアニメーション */
+        @keyframes scaleBg {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .animate-bg { animation: scaleBg 30s linear infinite; }
+        
+        @keyframes scrollLine {
+            0% { transform: translateY(-100%); }
+            100% { transform: translateY(200%); }
+        }
+        .animate-scroll { animation: scrollLine 1.5s linear infinite; }
+
+        @keyframes float1 { 0%, 100% { transform: translate(0, 0) rotateX(0) rotateY(0); } 50% { transform: translate(30px, -50px) rotateX(180deg) rotateY(180deg); } }
+        @keyframes float2 { 0%, 100% { transform: translate(0, 0) rotateX(0) rotateY(0); } 50% { transform: translate(-40px, 60px) rotateX(-180deg) rotateY(180deg); } }
+        @keyframes float3 { 0%, 100% { transform: translate(0, 0) rotateX(0) rotateY(0); } 50% { transform: translate(50px, 40px) rotateX(180deg) rotateY(-180deg); } }
+        
+        .floating-circle-1 { animation: float1 25s infinite ease-in-out; }
+        .floating-circle-2 { animation: float2 28s infinite ease-in-out; }
+        .floating-circle-3 { animation: float3 22s infinite ease-in-out; }
+    </style>
+</head>
+<body class="selection:bg-white selection:text-black">
+    <div class="noise-overlay"></div>
+    
+    <!-- Navigation -->
+    <nav class="fixed top-0 left-0 w-full z-40 p-6 flex justify-between items-center mix-blend-difference">
+        <div class="font-display text-2xl tracking-wider uppercase">NoVanityFit</div>
+        <button class="text-sm font-bold tracking-widest uppercase border border-white/30 rounded-full px-6 py-2 hover:bg-white hover:text-black transition-colors">
+            Join Now
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative h-screen flex items-center justify-center overflow-hidden">
+        <div class="absolute inset-0 z-0 animate-bg">
+            <img 
+                src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?q=80&w=2070&auto=format&fit=crop" 
+                alt="Training Silhouette" 
+                class="w-full h-full object-cover opacity-30 grayscale contrast-200"
+            />
+            <div class="absolute inset-0 bg-gradient-to-b from-transparent via-[#050505]/50 to-[#050505]"></div>
+        </div>
+
+        <!-- 3D-like floating elements -->
+        <div class="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+            <div class="absolute border border-white/5 rounded-full floating-circle-1" style="width: 400px; height: 400px; left: 10%; top: 20%;"></div>
+            <div class="absolute border border-white/5 rounded-full floating-circle-2" style="width: 600px; height: 600px; left: 60%; top: 10%;"></div>
+            <div class="absolute border border-white/5 rounded-full floating-circle-3" style="width: 300px; height: 300px; left: 80%; top: 60%;"></div>
+            <div class="absolute border border-white/5 rounded-full floating-circle-1" style="width: 500px; height: 500px; left: 20%; top: 70%;"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-4 w-full max-w-7xl mx-auto mt-20">
+            <h1 class="hero-text font-display text-[15vw] leading-[0.8] tracking-tighter uppercase mb-6">
+                No Vanity<br/><span class="text-outline">Fit</span>
+            </h1>
+            <p class="fade-in text-lg md:text-2xl font-light tracking-widest text-white/80" style="transition-delay: 0.5s;">
+                見栄を張らず、ありのままの自分を愛する。
+            </p>
+        </div>
+        
+        <div class="fade-in absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style="transition-delay: 1.5s;">
+            <span class="text-xs tracking-widest uppercase text-white/50">Scroll</span>
+            <div class="w-[1px] h-12 bg-white/20 overflow-hidden">
+                <div class="w-full h-1/2 bg-white animate-scroll"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Concept Section -->
+    <section class="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-2 gap-16 items-center">
+            <div class="fade-in">
+                <h2 class="font-display text-5xl md:text-7xl leading-[0.9] uppercase mb-8">
+                    Information<br/>is not enough.<br/>
+                    <span class="text-white/40">We guarantee<br/>transformation.</span>
+                </h2>
+            </div>
+            <div class="fade-in" style="transition-delay: 0.2s;">
+                <div class="space-y-6 text-lg md:text-xl font-light leading-relaxed text-white/80">
+                    <p>世の中にはフィットネスに関する情報が溢れています。しかし、情報だけでは人は変わりません。</p>
+                    <p>NoVanityFitは、あなたに知識を与えるだけでなく、<strong class="text-white font-medium">あなたの変化を「保証」するプログラム</strong>です。</p>
+                    <p>見栄も張らず、自分に嘘をつかない。ありのままの自分を受け入れ、好きになるための第一歩を、私たちが全力でサポートします。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="py-32 px-6 md:px-12 bg-[#0a0a0a] border-y border-white/10">
+        <div class="max-w-7xl mx-auto">
+            <div class="fade-in">
+                <h2 class="font-display text-4xl md:text-6xl uppercase mb-16 text-center">Our Program</h2>
+            </div>
+            
+            <div class="grid md:grid-cols-2 gap-px bg-white/10">
+                <!-- Service 1 -->
+                <div class="fade-in bg-[#0a0a0a] p-10 md:p-16 h-full group hover:bg-white transition-colors duration-500" style="transition-delay: 0s;">
+                    <div class="text-white/50 group-hover:text-black mb-8 transition-colors duration-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"/><path d="M7 2v20"/><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 group-hover:text-black transition-colors duration-500">毎日の食事管理</h3>
+                    <p class="text-white/60 group-hover:text-black/80 leading-relaxed transition-colors duration-500">PFCバランスから日々の摂取カロリーまで、あなたの目標に合わせた最適な食事を徹底的に管理・指導します。</p>
+                </div>
+                <!-- Service 2 -->
+                <div class="fade-in bg-[#0a0a0a] p-10 md:p-16 h-full group hover:bg-white transition-colors duration-500" style="transition-delay: 0.1s;">
+                    <div class="text-white/50 group-hover:text-black mb-8 transition-colors duration-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.4 14.4 9.6 9.6"/><path d="M18.657 21.485a2 2 0 1 1-2.829-2.828l-1.767 1.768a2 2 0 1 1-2.829-2.829l6.364-6.364a2 2 0 1 1 2.829 2.829l-1.768 1.767a2 2 0 1 1 2.828 2.829z"/><path d="m21.5 21.5-1.4-1.4"/><path d="M3.9 3.9 2.5 2.5"/><path d="M6.404 2.757a2 2 0 1 0-2.829 2.828l1.768-1.767a2 2 0 1 0 2.829 2.828L1.808 13.01a2 2 0 1 0-2.829-2.829l1.767-1.768a2 2 0 1 0 2.829-2.828z"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 group-hover:text-black transition-colors duration-500">専用トレーニングメニュー</h3>
+                    <p class="text-white/60 group-hover:text-black/80 leading-relaxed transition-colors duration-500">一人ひとりの骨格や筋力レベルに合わせたトレーニングメニューを作成。正しいフォームを解説する動画も送付します。</p>
+                </div>
+                <!-- Service 3 -->
+                <div class="fade-in bg-[#0a0a0a] p-10 md:p-16 h-full group hover:bg-white transition-colors duration-500" style="transition-delay: 0.2s;">
+                    <div class="text-white/50 group-hover:text-black mb-8 transition-colors duration-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 group-hover:text-black transition-colors duration-500">週1回のZoomカウンセリング</h3>
+                    <p class="text-white/60 group-hover:text-black/80 leading-relaxed transition-colors duration-500">毎週のオンライン面談で進捗を確認。モチベーションの維持や、プランの微調整を行い、停滞期を防ぎます。</p>
+                </div>
+                <!-- Service 4 -->
+                <div class="fade-in bg-[#0a0a0a] p-10 md:p-16 h-full group hover:bg-white transition-colors duration-500" style="transition-delay: 0.3s;">
+                    <div class="text-white/50 group-hover:text-black mb-8 transition-colors duration-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></svg>
+                    </div>
+                    <h3 class="text-2xl font-bold mb-4 group-hover:text-black transition-colors duration-500">24時間チャット対応</h3>
+                    <p class="text-white/60 group-hover:text-black/80 leading-relaxed transition-colors duration-500">トレーニング中の疑問や食事に関する悩みなど、いつでもチャットで相談可能。孤独なボディメイクにはさせません。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Coach Profile Section -->
+    <section class="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="grid md:grid-cols-12 gap-12 items-center">
+            <div class="md:col-span-5">
+                <div class="fade-in relative aspect-[3/4] overflow-hidden grayscale contrast-125">
+                    <img src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=2070&auto=format&fit=crop" alt="Coach" class="w-full h-full object-cover"/>
+                    <div class="absolute inset-0 border border-white/20 m-4"></div>
+                </div>
+            </div>
+            <div class="md:col-span-7 md:pl-12">
+                <div class="fade-in">
+                    <h3 class="font-display text-2xl text-white/50 uppercase mb-2">The Coach</h3>
+                    <h2 class="font-display text-5xl md:text-7xl uppercase mb-8">Experience<br/>& Science</h2>
+                    <div class="space-y-6 text-lg font-light leading-relaxed text-white/80">
+                        <p>大学時代、ハワイで4年間にわたり栄養学を専攻。</p>
+                        <p>海外生活の中で、周囲との体格差から自身の小柄な体に強いコンプレックスを抱いていました。その悔しさをバネに、2019年から現地の友人たちと共に本格的なジムトレーニングを開始。</p>
+                        <p>以来6年以上にわたり自身の体で実験と実践を繰り返し、<strong class="text-white font-medium">「体脂肪をできるだけ付けずに筋肉を増やしていく」</strong>メソッドを確立しました。</p>
+                        <p>栄養学の科学的根拠と、コンプレックスを乗り越えた実体験。その両方を持つ私だからこそ、あなたの心と体の変化に誰よりも寄り添い、確実な結果へと導くことができます。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trial Section -->
+    <section class="py-32 px-6 md:px-12 bg-white text-black text-center">
+        <div class="max-w-4xl mx-auto">
+            <div class="fade-in">
+                <h2 class="font-display text-6xl md:text-8xl uppercase mb-6">2 Weeks<br/>Free Trial</h2>
+                <p class="text-xl md:text-2xl font-medium mb-8">本格的なコーチングに入る前に、2週間の無料コーチングを実施します。</p>
+                <p class="text-lg text-black/70 mb-12">
+                    この短い期間でも、必ずあなたに結果をもたらします。<br/>
+                    私たちのメソッドとサポート体制を実際に体感し、ご納得いただけた場合のみ、本コーチングを開始してください。
+                </p>
+                <button class="bg-black text-white px-10 py-5 rounded-full font-bold tracking-widest uppercase hover:bg-black/80 transition-colors inline-flex items-center gap-2 group">
+                    Start Free Trial
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section class="py-32 px-6 md:px-12 max-w-7xl mx-auto">
+        <div class="fade-in text-center mb-20">
+            <h2 class="font-display text-5xl md:text-7xl uppercase mb-6">Pricing Plans</h2>
+            <p class="text-white/60 text-lg">あなたの目標達成期間に合わせた3つのプラン</p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+            <!-- 3 Months -->
+            <div class="fade-in border border-white/20 p-8 flex flex-col h-full hover:border-white transition-colors" style="transition-delay: 0.1s;">
+                <h3 class="font-display text-3xl uppercase mb-2">3 Months</h3>
+                <p class="text-white/50 text-sm mb-8">短期集中でベースを作る</p>
+                <div class="mb-8">
+                    <span class="text-4xl font-bold">¥35,000</span>
+                    <span class="text-white/50"> / 月</span>
+                </div>
+                <ul class="space-y-4 mb-12 flex-grow">
+                    <li class="flex items-start gap-3 text-white/80">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-white"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        <span>3ヶ月間の継続必須サブスクリプション</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-white/80">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-white"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        <span>全コーチングサービス込み</span>
+                    </li>
+                </ul>
+                <button class="w-full border border-white py-4 font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-colors">Select Plan</button>
+            </div>
+
+            <!-- 6 Months -->
+            <div class="fade-in border border-white bg-white text-black p-8 flex flex-col h-full relative transform md:-translate-y-4" style="transition-delay: 0.2s;">
+                <div class="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-black text-white px-4 py-1 text-sm font-bold tracking-widest uppercase border border-white">Most Popular</div>
+                <h3 class="font-display text-3xl uppercase mb-2">6 Months</h3>
+                <p class="text-black/60 text-sm mb-8">確実な変化を定着させる</p>
+                <div class="mb-2">
+                    <span class="text-4xl font-bold">¥30,000</span>
+                    <span class="text-black/60"> / 月</span>
+                </div>
+                <div class="inline-block bg-black text-white text-xs font-bold px-2 py-1 mb-8 self-start">約14% OFF</div>
+                <ul class="space-y-4 mb-12 flex-grow">
+                    <li class="flex items-start gap-3 text-black/80">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-black"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        <span>6ヶ月間の継続必須サブスクリプション</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-black/80">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-black"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        <span>全コーチングサービス込み</span>
+                    </li>
+                </ul>
+                <button class="w-full bg-black text-white py-4 font-bold tracking-widest uppercase hover:bg-black/80 transition-colors">Select Plan</button>
+            </div>
+
+            <!-- 1 Year -->
+            <div class="fade-in border border-white/20 p-8 flex flex-col h-full hover:border-white transition-colors" style="transition-delay: 0.3s;">
+                <h3 class="font-display text-3xl uppercase mb-2">1 Year</h3>
+                <p class="text-white/50 text-sm mb-8">究極のボディメイクと習慣化</p>
+                <div class="mb-2">
+                    <span class="text-4xl font-bold">¥25,000</span>
+                    <span class="text-white/50"> / 月</span>
+                </div>
+                <div class="inline-block bg-white text-black text-xs font-bold px-2 py-1 mb-8 self-start">約28% OFF</div>
+                <ul class="space-y-4 mb-12 flex-grow">
+                    <li class="flex items-start gap-3 text-white/80">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-white"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        <span>1年間の継続必須サブスクリプション</span>
+                    </li>
+                    <li class="flex items-start gap-3 text-white/80">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-white"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        <span>全コーチングサービス込み</span>
+                    </li>
+                </ul>
+                <button class="w-full border border-white py-4 font-bold tracking-widest uppercase hover:bg-white hover:text-black transition-colors">Select Plan</button>
+            </div>
+        </div>
+
+        <div class="fade-in mt-16 text-center border border-white/10 p-8 bg-white/5" style="transition-delay: 0.4s;">
+            <h4 class="font-bold text-xl mb-2">安心の返金保証</h4>
+            <p class="text-white/70">万が一サービスにご満足いただけない場合、コーチング開始後7日以内にお申し出いただければ、全額返金対応いたします。</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="border-t border-white/10 pt-16 pb-8 px-6 md:px-12 bg-[#050505]">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-8">
+            <div class="font-display text-3xl tracking-wider uppercase">NoVanityFit</div>
+            <div class="flex flex-wrap justify-center gap-8 text-sm text-white/60">
+                <a href="#" class="hover:text-white transition-colors">特定商取引法に基づく表記</a>
+                <a href="#" class="hover:text-white transition-colors">個人情報の取り扱い (Privacy Policy)</a>
+                <a href="#" class="hover:text-white transition-colors">免責事項 (Disclaimer)</a>
+                <a href="#" class="hover:text-white transition-colors">利用規約 (Terms of Service)</a>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-16 text-center text-white/30 text-xs">
+            &copy; 2026 NoVanityFit. All rights reserved.
+        </div>
+    </footer>
+
+    <!-- スクロールアニメーション用のJavaScript -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        // 一度表示されたら監視を解除（再度スクロールしてもアニメーションしない）
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { 
+                rootMargin: "0px 0px -100px 0px" // 画面の下から100px入ったところで発火
+            });
+
+            // .fade-in と .hero-text クラスを持つ要素をすべて監視
+            document.querySelectorAll('.fade-in, .hero-text').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
