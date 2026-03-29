@@ -226,17 +226,28 @@
         </div>
     </section>
 
-    <!-- Trial Section -->
-    <section id="free-trial" class="py-32 px-6 md:px-12 bg-white text-black text-center">
+  <!-- Trial Section -->
+    <section id="free-trial" class="py-24 md:py-32 px-6 md:px-12 text-center">
         <div class="max-w-4xl mx-auto">
-            <div class="fade-in">
-                <h2 class="font-display text-6xl md:text-8xl uppercase mb-6">2 Weeks<br/>Free Trial</h2>
-                <p class="text-xl md:text-2xl font-medium mb-8">本格的なコーチングに入る前に、2週間の無料コーチングを実施します。</p>
-                <p class="text-lg text-black/70 mb-12">
+            <!-- 白いカード部分 -->
+            <div class="fade-in bg-white text-black rounded-[2rem] p-10 md:p-16 shadow-2xl relative overflow-hidden">
+                <!-- 上部の黄色いアクセントライン（Pricingのマーカーと統一感を出します） -->
+                <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-yellow-400 to-yellow-600"></div>
+                
+                <h2 class="font-display text-5xl md:text-7xl uppercase mb-6 tracking-tight">2 Weeks<br/>Free Trial</h2>
+                
+                <!-- スタイリッシュな区切り線 -->
+                <div class="w-16 h-1 bg-black mx-auto mb-8"></div>
+                
+                <p class="text-xl md:text-2xl font-bold mb-6">本格的なコーチングに入る前に、<br class="md:hidden"/>2週間の無料コーチングを実施します。</p>
+                
+                <p class="text-base md:text-lg text-black/70 mb-10 leading-relaxed max-w-2xl mx-auto">
                     この短い期間でも、必ずあなたに結果をもたらします。<br/>
                     私たちのメソッドとサポート体制を実際に体感し、ご納得いただけた場合のみ、本コーチングを開始してください。
                 </p>
-                <a href="trial.html" class="bg-black text-white px-10 py-5 rounded-full font-bold tracking-widest uppercase hover:bg-black/80 transition-colors inline-flex items-center gap-2 group">
+                
+                <!-- ボタン（ホバー時に黄色になるように変更） -->
+                <a href="trial.html" class="bg-black text-white px-8 py-4 md:px-10 md:py-5 rounded-full font-bold tracking-widest uppercase hover:bg-yellow-500 hover:text-black transition-all duration-300 inline-flex items-center gap-2 group shadow-xl">
                     Start Free Trial
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-1 transition-transform"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                 </a>
